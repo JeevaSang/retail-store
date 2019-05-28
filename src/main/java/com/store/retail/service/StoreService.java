@@ -9,5 +9,5 @@ import com.store.retail.model.User;
 
 @Service
 public interface StoreService {
-	public double generateBill(User user, List<Product> t);
+	public double getNetPayment(User user, List<Product> products);
 }

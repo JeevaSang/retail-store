@@ -1,9 +1,5 @@
 package com.store.retail.service;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,20 +9,15 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.MockitoAnnotations;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.CollectionType;
 import com.store.retail.model.Product;
 import com.store.retail.model.User;
 import com.store.retail.service.impl.BillGeneratorServiceImpl;
+import com.store.retail.util.CommonUtil;
 
 public class BillGeneratorServiceTest {
 
 	@InjectMocks
 	BillGeneratorServiceImpl billGeneratorServiceImpl;
-
-	private static ObjectMapper objectMapper = new ObjectMapper();
 
 	private static final double DELTA = 1e-15;
 
@@ -40,9 +31,9 @@ public class BillGeneratorServiceTest {
 	 */
 	@Test
 	public void testProcess01() throws Exception{
-		List<Product> products = convertJsonToPOJO("input/Product.json", Product.class);
-		List<User> users = convertJsonToPOJO("input/User.json", User.class);
-		double netPayment = billGeneratorServiceImpl.generateBill(users.get(0), products);
+		List<Product> products = CommonUtil.convertJsonToPOJO("input/Product.json", Product.class);
+		List<User> users = CommonUtil.convertJsonToPOJO("input/User.json", User.class);
+		double netPayment = billGeneratorServiceImpl.getNetPayment(users.get(0), products);
 		Assert.assertEquals(28240.0, netPayment,DELTA);
 	}
 	
@@ -51,9 +42,9 @@ public class BillGeneratorServiceTest {
 	 */
 	@Test
 	public void testProcess02() throws Exception{
-		List<Product> products = convertJsonToPOJO("input/Product.json", Product.class);
-		List<User> users = convertJsonToPOJO("input/User.json", User.class);
-		double netPayment = billGeneratorServiceImpl.generateBill(users.get(1), products);
+		List<Product> products = CommonUtil.convertJsonToPOJO("input/Product.json", Product.class);
+		List<User> users = CommonUtil.convertJsonToPOJO("input/User.json", User.class);
+		double netPayment = billGeneratorServiceImpl.getNetPayment(users.get(1), products);
 		Assert.assertEquals(36240.0, netPayment,DELTA);
 	}
 	
@@ -62,9 +53,9 @@ public class BillGeneratorServiceTest {
 	 */
 	@Test
 	public void testProcess03() throws Exception{
-		List<Product> products = convertJsonToPOJO("input/Product.json", Product.class);
-		List<User> users = convertJsonToPOJO("input/User.json", User.class);
-		double netPayment = billGeneratorServiceImpl.generateBill(users.get(2), products);
+		List<Product> products = CommonUtil.convertJsonToPOJO("input/Product.json", Product.class);
+		List<User> users = CommonUtil.convertJsonToPOJO("input/User.json", User.class);
+		double netPayment = billGeneratorServiceImpl.getNetPayment(users.get(2), products);
 		Assert.assertEquals(38240.0, netPayment,DELTA);
 	}
 	
@@ -73,9 +64,9 @@ public class BillGeneratorServiceTest {
 	 */
 	@Test
 	public void testProcess04() throws Exception{
-		List<Product> products = convertJsonToPOJO("input/Product.json", Product.class);
-		List<User> users = convertJsonToPOJO("input/User.json", User.class);
-		double netPayment = billGeneratorServiceImpl.generateBill(users.get(3), products);
+		List<Product> products = CommonUtil.convertJsonToPOJO("input/Product.json", Product.class);
+		List<User> users = CommonUtil.convertJsonToPOJO("input/User.json", User.class);
+		double netPayment = billGeneratorServiceImpl.getNetPayment(users.get(3), products);
 		Assert.assertEquals(38240.0, netPayment,DELTA);
 	}
 	
@@ -89,17 +80,9 @@ public class BillGeneratorServiceTest {
 		product.setQuantity(2);
 		product.setProductAmount(40);
 		products.add(product);
-		List<User> users = convertJsonToPOJO("input/User.json", User.class);
-		double netPayment = billGeneratorServiceImpl.generateBill(users.get(3), products);
+		List<User> users = CommonUtil.convertJsonToPOJO("input/User.json", User.class);
+		double netPayment = billGeneratorServiceImpl.getNetPayment(users.get(3), products);
 		Assert.assertEquals(80.0, netPayment,DELTA);
 	}
 
-	private static <T> List<T> convertJsonToPOJO(String jsonUrl, Class<T> t)
-			throws IOException, URISyntaxException, JsonParseException, JsonMappingException {
-		String jsonStr = new String (Files.readAllBytes(
-				Paths.get(ClassLoader.getSystemResource(jsonUrl).toURI())));
-	    CollectionType listType = objectMapper.getTypeFactory().constructCollectionType(ArrayList.class, t);
-		List<T> object = objectMapper.readValue(jsonStr, listType);
-		return object;
-	}
 }

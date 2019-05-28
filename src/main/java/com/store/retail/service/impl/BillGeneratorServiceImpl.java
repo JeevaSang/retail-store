@@ -1,7 +1,6 @@
 package com.store.retail.service.impl;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,6 +10,7 @@ import org.springframework.stereotype.Component;
 import com.store.retail.model.Product;
 import com.store.retail.model.User;
 import com.store.retail.service.StoreService;
+import com.store.retail.util.CommonUtil;
 
 /**
  * @author jeeva
@@ -22,7 +22,7 @@ public class BillGeneratorServiceImpl implements StoreService {
 	private static Logger logger = LoggerFactory.getLogger(BillGeneratorServiceImpl.class);
 
 	/**
-	 * Generate the bill based on the user 4 type discount logic 
+	 * Generate the net payment based on the user 4 type discount logic 
 	 * 1. If user is an employee will give 30% slot. 
 	 * 2. If user is an affiliate will give 10% slot.
 	 * 3. If user is exists over 2 years will give 5% slot. 
@@ -33,7 +33,7 @@ public class BillGeneratorServiceImpl implements StoreService {
 	 * @return NetPayment as a double object
 	 */
 	@Override
-	public double generateBill(User user, List<Product> products) {
+	public double getNetPayment(User user, List<Product> products) {
 		logger.info("Processing the discount based on user type");
 		logger.info("User info :: " + user);
 		logger.info("Product details :: " + products);
@@ -52,7 +52,7 @@ public class BillGeneratorServiceImpl implements StoreService {
 			netPayment = withoutGroceryAmt - (withoutGroceryAmt * 0.3); // Step 1 - 30% slot
 		else if (user.getUserType().equals("Affiliate"))
 			netPayment = withoutGroceryAmt - (withoutGroceryAmt * 0.1); // Step 2 - 10% slot
-		else if (convertStringToDateTime((String) user.getCreateDate()).plusYears(2).isBefore(LocalDateTime.now()))
+		else if (CommonUtil.convertStringToDateTime((String) user.getCreateDate()).plusYears(2).isBefore(LocalDateTime.now()))
 			netPayment = withoutGroceryAmt - (withoutGroceryAmt * 0.05); // Step 3 - 5% slot
 		else if (withoutGroceryAmt >= 100)
 			netPayment = withoutGroceryAmt - ((withoutGroceryAmt - (withoutGroceryAmt % 100)) * 0.05); // Step 4 - $5
@@ -67,15 +67,6 @@ public class BillGeneratorServiceImpl implements StoreService {
 		return netPayment;
 	}
 
-	/**
-	 * Converting String object to LocalDateTime Object
-	 * 
-	 * @param dateStr
-	 * @return LocalDateTime Object
-	 */
-	private LocalDateTime convertStringToDateTime(String dateStr) {
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-		return LocalDateTime.parse(dateStr, formatter);
-	}
+
 
 }
