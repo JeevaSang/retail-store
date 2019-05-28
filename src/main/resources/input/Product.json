@@ -1,0 +1,23 @@
+[
+	{
+		"productId": "A001",
+		"productName": "Mobile",
+		"productType": "Electornics",
+		"productAmount": 20000.00,
+		"quantity": 1
+	},
+	{
+		"productId": "A002",
+		"productName": "Suger",
+		"productType": "Groceries",
+		"productAmount": 120.00,
+		"quantity": 2
+	},
+	{
+		"productId": "A003",
+		"productName": "printerkit",
+		"productType": "Accessories",
+		"productAmount": 20000,
+		"quantity": 1
+	}
+]

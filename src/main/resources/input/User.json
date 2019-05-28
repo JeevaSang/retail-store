@@ -1,0 +1,26 @@
+[
+	{
+		"userId": "REG01",
+		"userName": "Jeeva",
+		"userType": "Employee",
+		"createDate": "2018-05-28 00:00"
+	},
+	{
+		"userId": "REG02",
+		"userName": "Abi",
+		"userType": "Affiliate",
+		"createDate": "2018-05-28 00:00"
+	},
+	{
+		"userId": "REG03",
+		"userName": "Sai",
+		"userType": "Customer",
+		"createDate": "2016-05-28 00:00"
+	},
+	{
+		"userId": "REG04",
+		"userName": "Dev",
+		"userType": "Customer",
+		"createDate": "2018-05-28 00:00"
+	}
+]
