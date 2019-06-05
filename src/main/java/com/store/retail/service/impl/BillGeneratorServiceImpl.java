@@ -11,6 +11,7 @@ import com.store.retail.model.Product;
 import com.store.retail.model.User;
 import com.store.retail.service.StoreService;
 import com.store.retail.util.CommonUtil;
+import com.store.retail.util.StaticData;
 
 /**
  * @author jeeva
@@ -22,12 +23,11 @@ public class BillGeneratorServiceImpl implements StoreService {
 	private static Logger logger = LoggerFactory.getLogger(BillGeneratorServiceImpl.class);
 
 	/**
-	 * Generate the net payment based on the user 4 type discount logic 
-	 * 1. If user is an employee will give 30% slot. 
-	 * 2. If user is an affiliate will give 10% slot.
-	 * 3. If user is exists over 2 years will give 5% slot. 
-	 * 4. If 100rs on the bill,there would be a $5rs. 
-	 * 5. Coupon won't application for Groceries.
+	 * Generate the net payment based on the user 4 type discount logic 1. If user
+	 * is an employee will give 30% slot. 2. If user is an affiliate will give 10%
+	 * slot. 3. If user is exists over 2 years will give 5% slot. 4. If 100rs on the
+	 * bill,there would be a $5rs. 5. Coupon won't application for Groceries.
+	 * 
 	 * @param user
 	 * @param products
 	 * @return NetPayment as a double object
@@ -38,21 +38,24 @@ public class BillGeneratorServiceImpl implements StoreService {
 		logger.info("User info :: " + user);
 		logger.info("Product details :: " + products);
 
-		double withoutGroceryAmt = products.stream().filter(product -> !product.getProductType().equals("Groceries"))
+		double withoutGroceryAmt = products.stream()
+				.filter(product -> !product.getProductType().equals(StaticData.GROCERIES))
 				.mapToDouble(product -> product.getProductAmount() * product.getQuantity()).sum();
 		logger.info("Without Groceries total amount :: " + withoutGroceryAmt);
 
-		double groceryAmtOnly = products.stream().filter(product -> product.getProductType().equals("Groceries"))
+		double groceryAmtOnly = products.stream()
+				.filter(product -> product.getProductType().equals(StaticData.GROCERIES))
 				.mapToDouble(product -> product.getProductAmount() * product.getQuantity()).sum();
 		logger.info("Groceries total amount :: " + groceryAmtOnly);
 
 		double netPayment = 0;
 
-		if (user.getUserType().equals("Employee"))
+		if (user.getUserType().equals(StaticData.EMPLOYEE))
 			netPayment = withoutGroceryAmt - (withoutGroceryAmt * 0.3); // Step 1 - 30% slot
-		else if (user.getUserType().equals("Affiliate"))
+		else if (user.getUserType().equals(StaticData.AFFILIATE))
 			netPayment = withoutGroceryAmt - (withoutGroceryAmt * 0.1); // Step 2 - 10% slot
-		else if (CommonUtil.convertStringToDateTime((String) user.getCreateDate()).plusYears(2).isBefore(LocalDateTime.now()))
+		else if (CommonUtil.convertStringToDateTime((String) user.getCreateDate()).plusYears(2)
+				.isBefore(LocalDateTime.now()))
 			netPayment = withoutGroceryAmt - (withoutGroceryAmt * 0.05); // Step 3 - 5% slot
 		else if (withoutGroceryAmt >= 100)
 			netPayment = withoutGroceryAmt - ((withoutGroceryAmt - (withoutGroceryAmt % 100)) * 0.05); // Step 4 - $5
@@ -66,7 +69,5 @@ public class BillGeneratorServiceImpl implements StoreService {
 		logger.info("Total net amount  :: " + netPayment);
 		return netPayment;
 	}
-
-
 
 }
